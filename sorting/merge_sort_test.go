@@ -1,4 +1,3 @@
-// This file only includes tests for Merge -- MergeSort tests can be found in sort.go
 package sorting_test
 
 import (
