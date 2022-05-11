@@ -23,15 +23,3 @@ func TestAltGroupDouble(t *testing.T) {
 		t.Error()
 	}
 }
-
-func TestIsNotNumeric(t *testing.T) {
-	t.Error("unimplemented")
-}
-
-func TestIsNumeric(t *testing.T) {
-	t.Error("unimplemented")
-}
-
-func TestSentenceEnd(t *testing.T) {
-	t.Error("unimplemented")
-}
