@@ -1,4 +1,4 @@
-package str
+package stringutils
 
 // Returns the first n characters of a string.
 func FirstN(s string, n uint64) string {

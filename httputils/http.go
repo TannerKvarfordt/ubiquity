@@ -1,4 +1,4 @@
-package networking
+package httputils
 
 import (
 	"net/http"

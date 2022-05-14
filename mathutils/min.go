@@ -1,4 +1,4 @@
-package mathematics
+package mathutils
 
 import "golang.org/x/exp/constraints"
 

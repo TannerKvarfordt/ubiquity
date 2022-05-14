@@ -1,6 +1,6 @@
-package regex
+package regexutils
 
-// Returns a regexp alternate group of the provided
+// Returns a regexutilsp alternate group of the provided
 // strings. For example, input of [a ,b] would result
 // in a return value of "(a|b)". Calling this function with
 // no arguments results in the empty string.
