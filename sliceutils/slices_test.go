@@ -219,3 +219,75 @@ func TestRemoveDuplicates(t *testing.T) {
 		t.Error()
 	}
 }
+
+func TestContains(t *testing.T) {
+	tList := []string{"a", "b", "c"}
+	if !sliceutils.Contains("a", tList...) {
+		t.Error()
+	}
+	if !sliceutils.Contains("b", tList...) {
+		t.Error()
+	}
+	if !sliceutils.Contains("c", tList...) {
+		t.Error()
+	}
+	if sliceutils.Contains("d", tList...) {
+		t.Error()
+	}
+
+	// No list provided, so does not contain keyVal.
+	if sliceutils.Contains(1) {
+		t.Error()
+	}
+	if sliceutils.Contains(1.2) {
+		t.Error()
+	}
+	if sliceutils.Contains(-1) {
+		t.Error()
+	}
+	if sliceutils.Contains(-1.3) {
+		t.Error()
+	}
+	if sliceutils.Contains(true) {
+		t.Error()
+	}
+	if sliceutils.Contains("foo") {
+		t.Error()
+	}
+}
+
+func TestCount(t *testing.T) {
+	tList := []string{"a", "b", "c", "b", "c", "c"}
+	if sliceutils.Count("a", tList...) != 1 {
+		t.Error()
+	}
+	if sliceutils.Count("b", tList...) != 2 {
+		t.Error()
+	}
+	if sliceutils.Count("c", tList...) != 3 {
+		t.Error()
+	}
+	if sliceutils.Count("d", tList...) != 0 {
+		t.Error()
+	}
+
+	// No list provided, so does not contain keyVal.
+	if sliceutils.Count(1) != 0 {
+		t.Error()
+	}
+	if sliceutils.Count(1.2) != 0 {
+		t.Error()
+	}
+	if sliceutils.Count(-1) != 0 {
+		t.Error()
+	}
+	if sliceutils.Count(-1.3) != 0 {
+		t.Error()
+	}
+	if sliceutils.Count(true) != 0 {
+		t.Error()
+	}
+	if sliceutils.Count("foo") != 0 {
+		t.Error()
+	}
+}

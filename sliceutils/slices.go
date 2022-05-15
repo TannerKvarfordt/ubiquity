@@ -62,3 +62,26 @@ func Equal[T comparable](a, b []T) bool {
 	}
 	return true
 }
+
+// Contains returns true if the provided keyVal is present
+// in the list of items.
+func Contains[T comparable](keyVal T, items ...T) bool {
+	for i := range items {
+		if items[i] == keyVal {
+			return true
+		}
+	}
+	return false
+}
+
+// Count returns the number of times keyVal is present in the list
+// of items.
+func Count[T comparable](keyVal T, items ...T) uint64 {
+	count := uint64(0)
+	for i := range items {
+		if items[i] == keyVal {
+			count++
+		}
+	}
+	return count
+}
