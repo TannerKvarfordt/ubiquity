@@ -198,3 +198,64 @@ func TestInsert(t *testing.T) {
 		return
 	}
 }
+
+func TestDelete(t *testing.T) {
+	l := linkedlist.NewSinglyLinkedList(0, 1, 2, 3, 4, 5)
+	if _, err := l.Delete(-1); err == nil {
+		t.Error()
+	}
+	if _, err := l.Delete(l.Len()); err == nil {
+		t.Error()
+	}
+	if _, err := l.Delete(l.Len() + 1); err == nil {
+		t.Error()
+	}
+
+	if v, err := l.Delete(0); err != nil {
+		t.Error(err)
+	} else {
+		if v != 0 {
+			t.Error()
+		}
+		if l.Len() != 5 {
+			t.Error()
+		}
+		if d, err := l.GetData(0); err != nil {
+			t.Error(err)
+		} else if d != 1 {
+			t.Error()
+		}
+	}
+
+	if v, err := l.Delete(4); err != nil {
+		t.Error(err)
+	} else {
+		if v != 5 {
+			t.Error()
+		}
+		if l.Len() != 4 {
+			t.Error()
+		}
+		if d, err := l.GetData(3); err != nil {
+			t.Error(err)
+		} else if d != 4 {
+			t.Error()
+		}
+	}
+
+	if v, err := l.Delete(1); err != nil {
+		t.Error(err)
+	} else {
+		if v != 2 {
+			t.Error()
+		}
+		if l.Len() != 3 {
+			t.Error()
+		}
+		if d, err := l.GetData(1); err != nil {
+			t.Error(err)
+		} else if d != 3 {
+			t.Error()
+		}
+	}
+}

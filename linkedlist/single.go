@@ -1,5 +1,7 @@
 package linkedlist
 
+import "github.com/TannerKvarfordt/ubiquity/err"
+
 type node[T any] struct {
 	data T
 	next *node[T]
@@ -10,6 +12,8 @@ type SinglyLinkedList[T any] struct {
 	head *node[T]
 }
 
+// NewSinglyLinkedList creates a new SinglyLinkedList containing
+// any provided data.
 func NewSinglyLinkedList[T any](data ...T) *SinglyLinkedList[T] {
 	l := SinglyLinkedList[T]{}
 	for _, d := range data {
@@ -71,7 +75,7 @@ func (l *SinglyLinkedList[T]) Prepend(data T) {
 // Returns an error if the index is out of bounds.
 func (l *SinglyLinkedList[T]) Insert(index int, data T) error {
 	if index < 0 || index > l.Len() {
-		return &IndexOutOfRangeError{index}
+		return &err.IndexOutOfRange{Idx: index}
 	}
 
 	if index == l.Len() {
@@ -93,7 +97,7 @@ func (l *SinglyLinkedList[T]) Insert(index int, data T) error {
 // If the index is out of range, an error is returned.
 func (l *SinglyLinkedList[T]) SetData(index int, data T) error {
 	if index < 0 || index >= l.Len() {
-		return &IndexOutOfRangeError{index}
+		return &err.IndexOutOfRange{Idx: index}
 	}
 
 	curr := l.head
@@ -106,10 +110,10 @@ func (l *SinglyLinkedList[T]) SetData(index int, data T) error {
 
 // GetData returns a copy of the data at the given index in
 // the list. If the index is out of range, a zero-value and
-// and error will be returned.
+// an error will be returned.
 func (l *SinglyLinkedList[T]) GetData(index int) (T, error) {
 	if index < 0 || index >= l.Len() {
-		return *new(T), &IndexOutOfRangeError{index}
+		return *new(T), &err.IndexOutOfRange{Idx: index}
 	}
 
 	curr := l.head
@@ -119,7 +123,29 @@ func (l *SinglyLinkedList[T]) GetData(index int) (T, error) {
 	return curr.data, nil
 }
 
-// TODO: func (l *SinglyLinkedList[T]) Delete(index int) error
+// Delete removes from the list the item at the given index.
+// The value at the given index is returned. If the index
+// is out of range, a zero-value and an error will be returned.
+func (l *SinglyLinkedList[T]) Delete(index int) (T, error) {
+	if index < 0 || index >= l.Len() {
+		return *new(T), &err.IndexOutOfRange{Idx: index}
+	}
+
+	if index == 0 {
+		rv := l.head.data
+		l.head = l.head.next
+		return rv, nil
+	}
+
+	curr := l.head
+	for i := 0; i != index-1; i++ {
+		curr = curr.next
+	}
+	rv := curr.next.data
+	curr.next = curr.next.next
+	return rv, nil
+}
+
 // TODO: func (l *SinglyLinkedList[T]) Find(data T) (indices []int, err error)
 // TODO: func (l *SinglyLinkedList[T]) Sort()
 // TODO: func Merge[T any](a, b SinglyLinkedList[T]) *SinglyLinkedList[T]
