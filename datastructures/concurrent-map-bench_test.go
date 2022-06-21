@@ -352,3 +352,123 @@ func BenchmarkMultiRemoveAbsentSyncMap(b *testing.B) {
 	}
 	wg.Wait()
 }
+
+// Benchmark the performance of single-threaded reads
+// of datastructures.ConcurrentMap.
+func BenchmarkRead(b *testing.B) {
+	m := datastructures.NewConcurrentMap[int, int]()
+	for i := 0; i < b.N; i++ {
+		m.Set(i, i)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		m.At(i)
+	}
+}
+
+// Benchmark the performance of single-threaded reads
+// of sync.Map.
+func BenchmarkReadSyncMap(b *testing.B) {
+	m := sync.Map{}
+	for i := 0; i < b.N; i++ {
+		m.Store(i, i)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		m.Load(i)
+	}
+}
+
+// Benchmark the performance of single-threaded reads
+// of datastructures.ConcurrentMap where the key is
+// not present.
+func BenchmarkReadAbsent(b *testing.B) {
+	m := datastructures.NewConcurrentMap[int, int]()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		m.At(i)
+	}
+}
+
+// Benchmark the performance of single-threaded reads
+// of sync.Map where the key is
+// not present.
+func BenchmarkReadSyncMapAbsent(b *testing.B) {
+	m := sync.Map{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		m.Load(i)
+	}
+}
+
+// Benchmark the performance of multi-threaded reads
+// of datastructures.ConcurrentMap.
+func BenchmarkMultiRead(b *testing.B) {
+	m := datastructures.NewConcurrentMap[int, int]()
+	for i := 0; i < b.N; i++ {
+		m.Set(i, i)
+	}
+	wg := &sync.WaitGroup{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		wg.Add(1)
+		go func(key int) {
+			m.At(key)
+			wg.Done()
+		}(i)
+	}
+	wg.Wait()
+}
+
+// Benchmark the performance of multi-threaded reads
+// of sync.Map.
+func BenchmarkMultiReadSyncMap(b *testing.B) {
+	m := sync.Map{}
+	for i := 0; i < b.N; i++ {
+		m.Store(i, i)
+	}
+	wg := &sync.WaitGroup{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		wg.Add(1)
+		go func(key int) {
+			m.Load(key)
+			wg.Done()
+		}(i)
+	}
+	wg.Wait()
+}
+
+// Benchmark the performance of multi-threaded reads
+// of datastructures.ConcurrentMap where the key is
+// not present.
+func BenchmarkMultiReadAbsent(b *testing.B) {
+	m := datastructures.NewConcurrentMap[int, int]()
+	wg := &sync.WaitGroup{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		wg.Add(1)
+		go func(key int) {
+			m.At(key)
+			wg.Done()
+		}(i)
+	}
+	wg.Wait()
+}
+
+// Benchmark the performance of multi-threaded reads
+// of sync.Map where the key is
+// not present.
+func BenchmarkMultiReadSyncMapAbsent(b *testing.B) {
+	m := sync.Map{}
+	wg := &sync.WaitGroup{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		wg.Add(1)
+		go func(key int) {
+			m.Load(key)
+			wg.Done()
+		}(i)
+	}
+	wg.Wait()
+}
