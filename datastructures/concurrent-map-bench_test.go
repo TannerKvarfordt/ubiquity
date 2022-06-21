@@ -236,3 +236,119 @@ func BenchmarkResetSyncMap(b *testing.B) {
 		})
 	}
 }
+
+// Benchmark the performance of single-threaded removals on
+// datastructures.ConcurrentMap.
+func BenchmarkRemove(b *testing.B) {
+	m := datastructures.NewConcurrentMap[int, string]()
+	for i := 0; i < b.N; i++ {
+		m.Set(i, "val")
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		m.Remove(i)
+	}
+}
+
+// Benchmark the performance of single-threaded removals on
+// sync.Map.
+func BenchmarkRemoveSyncMap(b *testing.B) {
+	m := sync.Map{}
+	for i := 0; i < b.N; i++ {
+		m.Store(i, "val")
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		m.Delete(i)
+	}
+}
+
+// Benchmark the performance of single-threaded removals on
+// datastructures.ConcurrentMap where the key is not present.
+func BenchmarkRemoveAbsent(b *testing.B) {
+	m := datastructures.NewConcurrentMap[int, string]()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		m.Remove(i)
+	}
+}
+
+// Benchmark the performance of single-threaded removals on
+// sync.Map where the key is not present.
+func BenchmarkRemoveAbsentSyncMap(b *testing.B) {
+	m := sync.Map{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		m.Delete(i)
+	}
+}
+
+// Benchmark the performance of multi-threaded removals on
+// datastructures.ConcurrentMap.
+func BenchmarkMultiRemove(b *testing.B) {
+	m := datastructures.NewConcurrentMap[int, int]()
+	for i := 0; i < b.N; i++ {
+		m.Set(i, i)
+	}
+	wg := &sync.WaitGroup{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		wg.Add(1)
+		go func(key int) {
+			m.Remove(key)
+			wg.Done()
+		}(i)
+	}
+	wg.Wait()
+}
+
+// Benchmark the performance of multi-threaded removals on
+// sync.Map.
+func BenchmarkMultiRemoveSyncMap(b *testing.B) {
+	m := sync.Map{}
+	for i := 0; i < b.N; i++ {
+		m.Store(i, i)
+	}
+	wg := &sync.WaitGroup{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		wg.Add(1)
+		go func(key int) {
+			m.Delete(key)
+			wg.Done()
+		}(i)
+	}
+	wg.Wait()
+}
+
+// Benchmark the performance of multi-threaded removals on
+// datastructures.ConcurrentMap where the key is not present.
+func BenchmarkMultiRemoveAbsent(b *testing.B) {
+	m := datastructures.NewConcurrentMap[int, int]()
+	wg := &sync.WaitGroup{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		wg.Add(1)
+		go func(key int) {
+			m.Remove(key)
+			wg.Done()
+		}(i)
+	}
+	wg.Wait()
+}
+
+// Benchmark the performance of multi-threaded removals on
+// sync.Map where the key is not present.
+func BenchmarkMultiRemoveAbsentSyncMap(b *testing.B) {
+	m := sync.Map{}
+	wg := &sync.WaitGroup{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		wg.Add(1)
+		go func(key int) {
+			m.Delete(key)
+			wg.Done()
+		}(i)
+	}
+	wg.Wait()
+}
