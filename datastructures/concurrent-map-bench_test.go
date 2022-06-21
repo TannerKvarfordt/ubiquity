@@ -21,7 +21,7 @@ func BenchmarkData(b *testing.B) {
 }
 
 // Benchmark the performance of single-threaded inserts on
-// datastructures.concurrentMap where the key does not exist.
+// datastructures.ConcurrentMap where the key does not exist.
 func BenchmarkInsertAbsent(b *testing.B) {
 	m := datastructures.NewConcurrentMap[int, string]()
 	b.ResetTimer()
@@ -41,7 +41,7 @@ func BenchmarkInsertAbsentSyncMap(b *testing.B) {
 }
 
 // Benchmark the performance of single-threaded inserts on
-// datastructures.concurrentMap where the key already exists.
+// datastructures.ConcurrentMap where the key already exists.
 func BenchmarkInsertPresent(b *testing.B) {
 	const (
 		key = "key"
@@ -71,7 +71,7 @@ func BenchmarkInsertPresentSyncMap(b *testing.B) {
 }
 
 // Benchmark the performance of single-threaded inserts on
-// datastructures.concurrentMap where the key already exists
+// datastructures.ConcurrentMap where the key already exists
 // but maps to a different value than what is being inserted.
 func BenchmarkInsertDifferent(b *testing.B) {
 	const key = "key"
@@ -97,7 +97,7 @@ func BenchmarkInsertDifferentSyncMap(b *testing.B) {
 }
 
 // Benchmark the performance of multi-threaded inserts on
-// datastructures.concurrentMap where the key does not exist.
+// datastructures.ConcurrentMap where the key does not exist.
 func BenchmarkMultiInsertAbsent(b *testing.B) {
 	m := datastructures.NewConcurrentMap[int, string]()
 	wg := &sync.WaitGroup{}
@@ -129,7 +129,7 @@ func BenchmarkMultiInsertAbsentSyncMap(b *testing.B) {
 }
 
 // Benchmark the performance of multi-threaded inserts on
-// datastructures.concurrentMap where the key already exists.
+// datastructures.ConcurrentMap where the key already exists.
 func BenchmarkMultiInsertPresent(b *testing.B) {
 	const (
 		key = "key"
@@ -169,7 +169,7 @@ func BenchmarkMultiInsertPresentSyncMap(b *testing.B) {
 }
 
 // Benchmark the performance of multi-threaded inserts on
-// datastructures.concurrentMap where the key already exists,
+// datastructures.ConcurrentMap where the key already exists,
 // but maps to a different value than what is being inserted.
 func BenchmarkMultiInsertDifferent(b *testing.B) {
 	const key = "key"
@@ -202,4 +202,37 @@ func BenchmarkMultiInsertDifferentSyncMap(b *testing.B) {
 		}(i)
 	}
 	wg.Wait()
+}
+
+// Benchmark the performance of clearing a datastructures.ConcurrentMap.
+func BenchmarkReset(b *testing.B) {
+	maps := make([]*datastructures.ConcurrentMap[int, int], b.N)
+	for i := range maps {
+		maps[i] = datastructures.NewConcurrentMap[int, int]()
+		for j := 0; j < 100; j++ {
+			maps[i].Set(j, j)
+		}
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		maps[i].Reset()
+	}
+}
+
+// Benchmark the performance of clearing a sync.Map.
+func BenchmarkResetSyncMap(b *testing.B) {
+	maps := make([]*sync.Map, b.N)
+	for i := range maps {
+		maps[i] = &sync.Map{}
+		for j := 0; j < 100; j++ {
+			maps[i].Store(j, j)
+		}
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		maps[i].Range(func(key, value any) bool {
+			maps[i].Delete(key)
+			return true
+		})
+	}
 }

@@ -202,4 +202,15 @@ func TestConcurrentMapRemove(t *testing.T) {
 	}
 }
 
-// TODO: benchmark against an unsharded implementation
+func TestConcurrentMapReset(t *testing.T) {
+	m := datastructures.NewConcurrentMap[string, string]()
+	m.Set("foo", "bar")
+	m.Set("bar", "baz")
+	if m.Len() != 2 {
+		t.Error()
+	}
+	m.Reset()
+	if m.Len() != 0 {
+		t.Error()
+	}
+}
