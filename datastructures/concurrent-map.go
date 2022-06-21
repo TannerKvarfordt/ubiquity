@@ -9,13 +9,13 @@ import (
 const ShardCount = 128
 
 // ConcurrentMap is a sharded, thread-safe mapping of keys to values.
-type concurrentMap[KEY comparable, VAL any] struct {
+type ConcurrentMap[KEY comparable, VAL any] struct {
 	shards [ShardCount]*shard[KEY, VAL]
 }
 
 // NewConcurrentMap creates a new ConcurrentMap.
-func NewConcurrentMap[KEY comparable, VAL any]() *concurrentMap[KEY, VAL] {
-	c := concurrentMap[KEY, VAL]{
+func NewConcurrentMap[KEY comparable, VAL any]() *ConcurrentMap[KEY, VAL] {
+	c := ConcurrentMap[KEY, VAL]{
 		shards: [ShardCount]*shard[KEY, VAL]{},
 	}
 	for i := range c.shards {
@@ -24,21 +24,31 @@ func NewConcurrentMap[KEY comparable, VAL any]() *concurrentMap[KEY, VAL] {
 	return &c
 }
 
-func (c concurrentMap[KEY, VAL]) getShard(key KEY) *shard[KEY, VAL] {
+func (c *ConcurrentMap[KEY, VAL]) getShard(key KEY) *shard[KEY, VAL] {
 	return c.shards[fnv1a(key)%uint64(ShardCount)]
+}
+
+func (c *ConcurrentMap[KEY, VAL]) Reset() {
+	for _, shard := range c.shards {
+		shard.mutex.Lock()
+		for key := range shard.Contents {
+			delete(shard.Contents, key)
+		}
+		shard.mutex.Unlock()
+	}
 }
 
 // At returns the value for the given key and a bool indicating whether or not
 // the given key exists in the map. If the given key does not exist, then the
 // zero-value of VAL and false are returned.
-func (c *concurrentMap[KEY, VAL]) At(key KEY) (VAL, bool) {
+func (c *ConcurrentMap[KEY, VAL]) At(key KEY) (VAL, bool) {
 	shard := c.getShard(key)
 	return shard.at(key)
 }
 
 // Set inserts the given val at the specified key, or overrides the
 // current value for that key if there is one.
-func (c *concurrentMap[KEY, VAL]) Set(key KEY, val VAL) {
+func (c *ConcurrentMap[KEY, VAL]) Set(key KEY, val VAL) {
 	shard := c.getShard(key)
 	shard.set(key, val)
 }
@@ -46,7 +56,7 @@ func (c *concurrentMap[KEY, VAL]) Set(key KEY, val VAL) {
 // SetIfAbsent inserts the given val at the specified key, so long as
 // the specified key does not already exist in the map. A bool is returned
 // indicating whether or not the insert took place.
-func (c *concurrentMap[KEY, VAL]) SetIfAbsent(key KEY, val VAL) bool {
+func (c *ConcurrentMap[KEY, VAL]) SetIfAbsent(key KEY, val VAL) bool {
 	shard := c.getShard(key)
 	return shard.setIfAbsent(key, val)
 }
@@ -54,13 +64,13 @@ func (c *concurrentMap[KEY, VAL]) SetIfAbsent(key KEY, val VAL) bool {
 // SetIfPresent inserts the given val at the specified key, so long as
 // the specified key already exists in the map. A bool is returned
 // indicating whether or not the insert took place.
-func (c *concurrentMap[KEY, VAL]) SetIfPresent(key KEY, val VAL) bool {
+func (c *ConcurrentMap[KEY, VAL]) SetIfPresent(key KEY, val VAL) bool {
 	shard := c.getShard(key)
 	return shard.setIfPresent(key, val)
 }
 
 // Len returns the number of keys in the map.
-func (c *concurrentMap[KEY, VAL]) Len() int {
+func (c *ConcurrentMap[KEY, VAL]) Len() int {
 	size := 0
 	for _, s := range c.shards {
 		if s == nil {
@@ -74,7 +84,7 @@ func (c *concurrentMap[KEY, VAL]) Len() int {
 }
 
 // Data returns the contents of all ConcurrentMap shards as a map[KEY]VAL.
-func (c *concurrentMap[KEY, VAL]) Data() map[KEY]VAL {
+func (c *ConcurrentMap[KEY, VAL]) Data() map[KEY]VAL {
 	m := make(map[KEY]VAL, c.Len())
 	for _, shard := range c.shards {
 		shard.mutex.RLock()
@@ -89,7 +99,7 @@ func (c *concurrentMap[KEY, VAL]) Data() map[KEY]VAL {
 // Remove deletes the element with the specified key from the
 // map, if it exists. A boolean is returned indicating whether
 // or not any deletion was necessary.
-func (c *concurrentMap[KEY, VAL]) Remove(key KEY) bool {
+func (c *ConcurrentMap[KEY, VAL]) Remove(key KEY) bool {
 	shard := c.getShard(key)
 	return shard.remove(key)
 }
