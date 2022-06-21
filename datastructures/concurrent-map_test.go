@@ -201,3 +201,5 @@ func TestConcurrentMapRemove(t *testing.T) {
 		t.Error()
 	}
 }
+
+// TODO: benchmark against an unsharded implementation
