@@ -5,7 +5,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/TannerKvarfordt/ubiquity/datastructures"
+	"github.com/Kardbord/ubiquity/datastructures"
 )
 
 // Benchmark the performance of the Data function.

@@ -3,7 +3,7 @@ package sliceutils_test
 import (
 	"testing"
 
-	"github.com/TannerKvarfordt/ubiquity/sliceutils"
+	"github.com/Kardbord/ubiquity/sliceutils"
 )
 
 func TestAllItemsEqual(t *testing.T) {

@@ -3,7 +3,7 @@ package httputils_test
 import (
 	"testing"
 
-	"github.com/TannerKvarfordt/ubiquity/httputils"
+	"github.com/Kardbord/ubiquity/httputils"
 )
 
 func TestIsReachable(t *testing.T) {
@@ -17,7 +17,7 @@ func TestIsReachable(t *testing.T) {
 		t.Error()
 	}
 
-	url = "https://www.github.com/TannerKvarfordt/ubiquity/httputils"
+	url = "https://www.github.com/Kardbord/ubiquity/httputils"
 	if !httputils.IsReachableURL(url) {
 		t.Error()
 	}
@@ -44,7 +44,7 @@ func TestIsHttps(t *testing.T) {
 		t.Error()
 	}
 
-	url = "https://www.github.com/TannerKvarfordt/ubiquity/httputils"
+	url = "https://www.github.com/Kardbord/ubiquity/httputils"
 	if !httputils.IsHTTPS(url) {
 		t.Error()
 	}

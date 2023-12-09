@@ -1,4 +1,4 @@
-module github.com/TannerKvarfordt/ubiquity
+module github.com/Kardbord/ubiquity
 
 go 1.18
 

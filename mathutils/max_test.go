@@ -1,7 +1,7 @@
 package mathutils_test
 
 import (
-	"github.com/TannerKvarfordt/ubiquity/mathutils"
+	"github.com/Kardbord/ubiquity/mathutils"
 	"testing"
 )
 

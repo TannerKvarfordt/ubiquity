@@ -3,7 +3,7 @@ package datastructures_test
 import (
 	"testing"
 
-	"github.com/TannerKvarfordt/ubiquity/datastructures"
+	"github.com/Kardbord/ubiquity/datastructures"
 )
 
 func TestConcurrentMap(t *testing.T) {

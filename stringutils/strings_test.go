@@ -4,7 +4,7 @@ import (
 	"testing"
 	"unicode/utf8"
 
-	"github.com/TannerKvarfordt/ubiquity/stringutils"
+	"github.com/Kardbord/ubiquity/stringutils"
 )
 
 func TestFirstN(t *testing.T) {

@@ -1,8 +1,8 @@
 package sorting_test
 
 import (
-	"github.com/TannerKvarfordt/ubiquity/sliceutils"
-	"github.com/TannerKvarfordt/ubiquity/sorting"
+	"github.com/Kardbord/ubiquity/sliceutils"
+	"github.com/Kardbord/ubiquity/sorting"
 	"testing"
 )
 

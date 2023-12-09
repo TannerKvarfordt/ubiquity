@@ -3,7 +3,7 @@ package regexutils_test
 import (
 	"testing"
 
-	"github.com/TannerKvarfordt/ubiquity/regexutils"
+	"github.com/Kardbord/ubiquity/regexutils"
 )
 
 func TestAltGroupEmpty(t *testing.T) {
